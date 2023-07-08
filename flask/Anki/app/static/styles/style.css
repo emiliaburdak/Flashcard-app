@@ -1,0 +1,21 @@
+* {
+  box-sizing: border-box;
+}
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #FFFAFA;
+    font-family: 'Open Sans', sans-serif;
+}
+.navbar {
+    background-color: #FFFAFA;
+    color: #000000;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: normal;
+    border-bottom: 1px solid #C0C0C0;
+    margin-left: 35px;
+    margin-right: 35px;
+}
