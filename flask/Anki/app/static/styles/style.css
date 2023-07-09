@@ -18,4 +18,70 @@ body {
     border-bottom: 1px solid #C0C0C0;
     margin-left: 35px;
     margin-right: 35px;
+    padding: 20px;
+}
+.nav-buttons {
+  background-color: #FFFAFA;
+  border: none;
+  color: #000000;
+  padding: 5px 30px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.nav-buttons svg {
+  margin-right: 15px;
+}
+
+.search-label {
+    margin-left: 90px;
+    color: black;
+}
+.authentication-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.one-item-box{
+    display: flex;
+    justify-content: center;
+    position: relative;
+    margin: 10px;
+}
+
+.input-label{
+    color: #000000;
+    background-color: #FFFAFA;
+    font-weight: normal;
+    font-size: 12px;
+    position: absolute;
+    top: 1px;
+    padding: 0 3px;
+    margin-right: 800px;
+
+}
+
+.input{
+    width: 70vw;
+    height: 35px;
+    border: 1px solid #C0C0C0;
+    border-radius: 6px;
+    background-color: #FFFAFA;
+    margin: 10px;
+    padding:10px;
+
+}
+
+.authentication-submit-button {
+    width: 60%;
+    height: 40px;
+    color: #000000 ;
+    background-color: #FFFAFA;
+    border: 1px solid #C0C0C0;
+    border-radius: 16px;
+    font-weight: bold;
+    font-size: 16px;
+
+
 }
