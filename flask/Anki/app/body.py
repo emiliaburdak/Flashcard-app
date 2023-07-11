@@ -10,9 +10,15 @@ body = Blueprint('body', __name__)
 @body.route('/home')
 @login_required
 def home():
-    all_flashcards = FlashCard.query.all()
-    return render_template('home.html', user=current_user, flashcards=all_flashcards)
+    decks_tuples = FlashCard.query.with_entities(FlashCard.deck).distinct().all()
+    # decks_tuples = [("Talia 1",), ("Talia 2",), ("Talia3,)]
+    decks = [deck_name[0] for deck_name in decks_tuples]
+    # decks = [Talia1, Talia2, Talia3]
 
+    # all_flashcards = FlashCard.query.all()
+    # decks = {flashcard.deck for flashcard in all_flashcards}
+
+    return render_template('home.html', user=current_user, decks=decks)
 
 @body.route('/add-flashcard', methods=['GET', 'POST'])
 @login_required
@@ -21,7 +27,7 @@ def add_flashcard():
         back_name = request.form.get('back-name')
         front_name = request.form.get('front-name')
         language = request.form.get('language')
-        deck = request.form.get('deck')
+        deck = request.form.get('flashcard-deck')
         sentence = request.form.get('example-sentence')
         if len(back_name) < 1 or len(front_name) < 1:
             flash('Word is too short!')
@@ -30,9 +36,16 @@ def add_flashcard():
                                       sentence=sentence)
             db.session.add(new_flashcard)
             db.session.commit()
-            return render_template('new_flashcard.html', user=current_user)
 
     return render_template('new_flashcard.html', user=current_user)
 
 
+@body.route('/deck/<deck>')
+def deck(deck):
+    flashcards = FlashCard.query.filter_by(deck=deck).all()
+    return render_template('deck.html', deck=deck, flashcards=flashcards, user=current_user)
 
+@body.route('/display')
+def display():
+    all_flashcards = FlashCard.query.all()
+    return render_template('check.html', all_flashcards=all_flashcards, user=current_user)

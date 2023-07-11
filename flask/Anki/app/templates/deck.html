@@ -1,0 +1,14 @@
+{% extends "baseline.html" %}
+{% block title %}Home{% endblock %}
+{% block content%}
+<section>
+    <h1>{{ deck }}</h1>
+
+    {% for flashcard in flashcards %}
+    {{ flashcard.front_name }}
+    {{ flashcard.back_name }}
+    {{ flashcard.sentence }}
+    {% endfor %}
+</section>
+
+{% endblock %}

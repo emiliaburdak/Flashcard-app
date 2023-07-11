@@ -2,14 +2,16 @@
 {% block title %}Home{% endblock %}
 {% block content%}
 
-  <ul>
-    {% for flashcard in flashcards %}
-      <li>
-        <h3>{{ flashcard.front_name }}</h3>
-        <p>{{ flashcard.back_name }}</p>
-        <p>{{ flashcard.sentence }}</p>
-      </li>
-    {% endfor %}
-  </ul>
+<section>
+    <ul class="deck-buttons">
+        {% for deck in decks %}
+        {% if deck != None %}
+        <li><a href="{{ url_for('body.deck', deck=deck) }}">{{ deck }}</a></li>
+        {% else %}
+        <p>No decks</p>
+        {% endif %}
+        {% endfor %}
+    </ul>
+</section>
 
 {% endblock %}
