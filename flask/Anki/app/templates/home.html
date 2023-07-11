@@ -1,5 +1,15 @@
 {% extends "baseline.html" %}
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+{% block title %}Home{% endblock %}
+{% block content%}
 
+  <ul>
+    {% for flashcard in flashcards %}
+      <li>
+        <h3>{{ flashcard.front_name }}</h3>
+        <p>{{ flashcard.back_name }}</p>
+        <p>{{ flashcard.sentence }}</p>
+      </li>
+    {% endfor %}
+  </ul>
 
-
+{% endblock %}

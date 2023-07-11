@@ -19,7 +19,7 @@ def create_app():
     app.register_blueprint(body, url_prefix='/')
     app.register_blueprint(authentication, url_prefix='/')
 
-    from .models import User
+    from .models import User, FlashCard
 
     with app.app_context():
         db.create_all()
@@ -35,6 +35,6 @@ def create_app():
     return app
 
 
-def create_detabase(app):
+def create_database(app):
     if not path.exists('app/' + DB_NAME):
         db.create_all()

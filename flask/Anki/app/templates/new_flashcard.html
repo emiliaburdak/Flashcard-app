@@ -1,0 +1,66 @@
+{% extends "baseline.html" %}
+{% block title %}New FlashCard{% endblock %}
+{% block content%}
+
+<section class="authentication-box">
+    <form method="POST">
+        <h3 class="authentication-title">Add new flashcard</h3>
+        <div class="one-item-box">
+            <label class="input-label" for="front-name">Front of the flashcard</label>
+            <input
+                    class="input"
+                    type="text"
+                    id="front-name"
+                    name="front-name"
+            />
+        </div>
+
+        <div class="one-item-box">
+            <label class="input-label" for="back-name">Back of the flashcard</label>
+            <input
+                    class="input"
+                    type="text"
+                    id="back-name"
+                    name="back-name"
+            />
+        </div>
+
+        <div class="one-item-box">
+            <label class="input-label" for="example-sentence">Example sentence</label>
+            <input
+                    class="input"
+                    type="text"
+                    id="example-sentence"
+                    name="example-sentence"
+            />
+        </div>
+
+        <div class="one-item-box">
+            <label class="input-label" for="language">Language</label>
+            <input
+                    class="input"
+                    type="text"
+                    id="language"
+                    name="language"
+            />
+        </div>
+
+        <div class="one-item-box">
+            <label class="input-label" for="flashcard-deck">Flashcard deck</label>
+            <input
+                    class="input"
+                    type="text"
+                    id="flashcard-deck"
+                    name="flashcard-deck"
+            />
+        </div>
+
+        <br>
+        <div class="one-item-box">
+            <button type=submit class="authentication-submit-button">Submit</button>
+        </div>
+
+    </form>
+</section>
+
+{% endblock %}
