@@ -3,12 +3,14 @@
 {% block content%}
 
 <section>
-    <ul class="deck-buttons">
+    <ul class="display-deck-view">
         {% for deck in decks %}
         {% if deck != None %}
-        <li><a href="{{ url_for('body.deck', deck=deck) }}">{{ deck }}</a></li>
-        {% else %}
-        <p>No decks</p>
+        <ul><a href="{{ url_for('body.deck', deck=deck) }}">
+            <button class="deck-buttons" type="button">
+                {{ deck.lower() }}
+            </button>
+        </a></ul>
         {% endif %}
         {% endfor %}
     </ul>
