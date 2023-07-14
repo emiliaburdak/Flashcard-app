@@ -10,7 +10,6 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(150))
     first_name = db.Column(db.String(150))
     decks = db.relationship('Deck', backref='user', passive_deletes=True)
-    flashcards = db.relationship('FlashCard', backref='user', passive_deletes=True)
 
 
 class FlashCard(db.Model, UserMixin):
@@ -18,7 +17,6 @@ class FlashCard(db.Model, UserMixin):
     back_name = db.Column(db.String(50))
     front_name = db.Column(db.String(50))
     sentence = db.Column(db.String(500))
-    author_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     deck_id = db.Column(db.Integer, db.ForeignKey('deck.id', ondelete='CASCADE'), nullable=False)
 
 

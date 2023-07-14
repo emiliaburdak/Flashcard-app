@@ -21,16 +21,16 @@ body {
     padding: 20px;
 }
 .nav-buttons {
-  background-color: #FFFAFA;
-  border: none;
-  color: #000000;
-  padding: 5px 30px;
-  font-size: 14px;
-  cursor: pointer;
+    background-color: #FFFAFA;
+    border: none;
+    color: #000000;
+    padding: 5px 30px;
+    font-size: 14px;
+    cursor: pointer;
 }
 
 .nav-buttons svg {
-  margin-right: 15px;
+    margin-right: 15px;
 }
 
 .search-label {
@@ -85,14 +85,40 @@ body {
 }
 
 .deck-buttons {
-  background-color: #FFFAFA;
-  border: 1px solid #C0C0C0;
-  border-radius: 16px;
-  margin: 10px;
-  color: #000000;
-  padding: 40px 30px;
-  font-size: 20px;
-  cursor: pointer;
-  width: 90vw;
+    background-color: #FFFAFA;
+    border: 1px solid #C0C0C0;
+    border-radius: 16px;
+    margin: 10px;
+    color: #000000;
+    padding: 40px 30px;
+    font-size: 20px;
+    cursor: pointer;
+    width: 90vw;
+}
 
+.note {
+    color: #000000;
+    font-weight: normal;
+    font-size: 12px;
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+
+.error-flash-alert {
+    background-color:;
+    color:;
+    padding: 5px 30px;
+    font-weight: normal;
+    font-size: 12px;
+
+}
+
+.flash-close-button {
+    background-color: #FFFAFA;
+    border: none;
+    color: #000000;
+    padding: 5px 30px;
+    font-size: 14px;
+    cursor: pointer;
 }

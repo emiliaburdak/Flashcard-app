@@ -88,6 +88,26 @@
     {% endif %}
 
 </nav>
+<section>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    {% if category== 'error' %}
+    <div class="error-flash-alert" role="alert">
+        {{ message }}
+        <button type="button" class="flash-close-button" data-dismiss="alert">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% else %}
+    <div class="success-flash-alert" role="alert">
+        {{ message }}
+        <button type="button" class="flash-close-button" data-dismiss="alert">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+</section>
+{% endif %} {% endfor %} {% endif %} {% endwith %}
 
 {% block content %}
 {% endblock %}

@@ -46,15 +46,20 @@
         </div>
 
         <div class="one-item-box">
-            <label class="input-label" for="flashcard-deck">Flashcard deck</label>
-            <input
-                    class="input"
-                    type="text"
-                    id="flashcard-deck"
-                    name="flashcard-deck"
-            />
+            <label class="input-label" for="existing-deck">Select existing deck</label>
+            <select class="input" id="existing-deck" name="existing-deck">
+                <option selected disabled>-- select an existing deck --</option>
+                {% for deck in existing_decks %}
+                <option value="{{ deck }}">{{ deck }}</option>
+                {% endfor %}
+            </select>
         </div>
 
+        <div class="one-item-box">
+            <label class="input-label" for="new-deck">* New deck</label>
+            <input class="input" type="text" id="new-deck" name="new-deck" placeholder="Create new deck"/>
+        </div>
+        <p class="note">*If you want to create new deck, skip the "Select existing deck" field and write the name of new deck in "New deck" field</p>
         <br>
         <div class="one-item-box">
             <button type=submit class="authentication-submit-button">Submit</button>
