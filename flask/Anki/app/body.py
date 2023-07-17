@@ -44,22 +44,25 @@ def add_flashcard():
             return redirect(url_for('body.add_flashcard'))
 
         else:
-            if select_existing_deck:
+            if select_existing_deck and not create_new_deck:
                 find_selected_deck_object = list(filter(lambda x: x.deck_name == select_existing_deck, user.decks))
                 deck_id = find_selected_deck_object[0].id
 
-            elif create_new_deck:
+            elif create_new_deck and not select_existing_deck:
 
                 check_if_matching_names = list(filter(lambda x: x.deck_name == create_new_deck, user.decks))
                 if check_if_matching_names:
                     deck_id = check_if_matching_names[0].id
                     flash('Your new deck name already exist - the flashcard has been assigned to the existing deck')
-
                 else:
                     new_deck = Deck(deck_name=create_new_deck, author_id=user.id, language=language)
                     db.session.add(new_deck)
                     db.session.flush()
                     deck_id = new_deck.id
+
+            elif create_new_deck and select_existing_deck:
+                flash('Please add flashcard to the one of the existing decks or add to new deck', category='error')
+                return redirect(url_for('body.add_flashcard'))
 
             else:
                 flash('Select deck from existing decks or create new deck', category='error')

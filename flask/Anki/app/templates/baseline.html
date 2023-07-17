@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="{{ url_for('static', filename='styles/style.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com"/>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
     <link
@@ -93,21 +93,26 @@
     {% if messages %}
     {% for category, message in messages %}
     {% if category== 'error' %}
-    <div class="error-flash-alert" role="alert">
+    <div class="error-flash-alert error-color" role="alert">
         {{ message }}
-        <button type="button" class="flash-close-button" data-dismiss="alert">
+        <button type="button" class="flash-close-button error-color" data-dismiss="alert">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
     {% else %}
-    <div class="success-flash-alert" role="alert">
+    <div class="success-flash-alert success-color" role="alert">
         {{ message }}
-        <button type="button" class="flash-close-button" data-dismiss="alert">
+        <button type="button" class="flash-close-button success-color" data-dismiss="alert">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
 </section>
 {% endif %} {% endfor %} {% endif %} {% endwith %}
+
+<script
+        type="text/javascript"
+        src="{{ url_for('static', filename='index.js') }}"
+></script>
 
 {% block content %}
 {% endblock %}
