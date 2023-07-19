@@ -26,3 +26,10 @@ class Deck(db.Model, UserMixin):
     author_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     flashcards = db.relationship('FlashCard', backref='deck', passive_deletes=True)
     language = db.Column(db.String(50))
+
+
+class UserProgress(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    deck_id = db.Column(db.Integer, db.ForeignKey('deck.id'), nullable=False)
+    last_flashcard_id = db.Column(db.Integer, db.ForeignKey('flash_card.id'), nullable=True)

@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
-from .models import FlashCard, User, Deck
+from .models import FlashCard, User, Deck, UserProgress
 from . import db
 
 body = Blueprint('body', __name__)
@@ -10,14 +10,11 @@ body = Blueprint('body', __name__)
 @body.route('/home')
 @login_required
 def home():
-    # deck_names = list(map(lambda x: x.deck_name, user.decks))
-    # all_decks = Deck.query.with_entities(FlashCard.deck).distinct().all()
-
     all_decks_tuples = Deck.query.with_entities(Deck.deck_name).all()
     all_decks_names = [deck_name[0] for deck_name in all_decks_tuples]
 
     # all_decks_tuples = [("Talia 1",), ("Talia 2",), ("Talia3,)]
-    return render_template('home.html', user=current_user, decks=all_decks_names)
+    return render_template('home.html', user=current_user, decks_names=all_decks_names)
 
 
 @body.route('/add-flashcard', methods=['GET', 'POST'])
@@ -76,15 +73,36 @@ def add_flashcard():
     return render_template('new_flashcard.html', user=current_user, existing_decks=all_existing_decks_names)
 
 
-@body.route('/deck/<deck>')
-def deck(deck):
-    deck_object = Deck.query.filter_by(deck_name=deck).first()
+@body.route('/display_flashcard/<deck_name>', methods=["GET", "POST"])
+def display_flashcard(deck_name):
+    deck_object = Deck.query.filter_by(deck_name=deck_name).first()
     if not deck_object:
         flash('No such deck')
-        return redirect(url_for('home.html'))
+        return redirect(url_for('body.home'))
+
     deck_id = deck_object.id
-    flashcards = FlashCard.query.filter_by(deck_id=deck_id).all()
-    return render_template('deck.html', deck=deck, flashcards=flashcards, user=current_user)
+    user_id = deck_object.author_id
+    user_progress = UserProgress.query.filter_by(user_id=user_id, deck_id=deck_id).first()
+    if user_progress is None:
+        user_progress = UserProgress(user_id=user_id, deck_id=deck_id, last_flashcard_id=None)
+        db.session.add(user_progress)
+
+    last_flashcard_id = user_progress.last_flashcard_id
+
+    if last_flashcard_id is None:
+        next_flashcard_id = FlashCard.query.filter_by(deck_id=deck_id).order_by(FlashCard.id).first()
+    else:
+        next_flashcard_id = FlashCard.query.filter(FlashCard.deck_id == deck_id,
+                                                   FlashCard.id > last_flashcard_id).order_by(FlashCard.id).first()
+
+    if next_flashcard_id is None:
+        next_flashcard_id = FlashCard.query.filter_by(deck_id=deck_id).order_by(FlashCard.id).first()
+
+    user_progress.last_flashcard_id = next_flashcard_id.id
+    db.session.commit()
+
+    return render_template('display_flashcard.html', user_id=user_id, user=current_user, flashcard=next_flashcard_id,
+                           deck_name=deck_name)
 
 
 @body.route('/display')

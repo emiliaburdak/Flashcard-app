@@ -4,11 +4,11 @@
 
 <section>
     <ul class="display-deck-view">
-        {% for deck in decks %}
-        {% if deck != None %}
-        <ul><a href="{{ url_for('body.deck', deck=deck) }}">
+        {% for deck_name in decks_names %}
+        {% if deck_name != None %}
+        <ul><a href="{{ url_for('body.display_flashcard', deck_name=deck_name) }}">
             <button class="deck-buttons" type="button">
-                {{ deck.lower() }}
+                {{ deck_name.lower() }}
             </button>
         </a></ul>
         {% endif %}

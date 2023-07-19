@@ -2,13 +2,17 @@
 {% block title %}Home{% endblock %}
 {% block content%}
 <section>
-    <h1>{{ deck }}</h1>
+    <h1>{{ deck_name }}</h1>
 
-    {% for flashcard in flashcards %}
     {{ flashcard.front_name }}
     {{ flashcard.back_name }}
     {{ flashcard.sentence }}
-    {% endfor %}
+
+    <form method="POST" action="{{ url_for('body.display_flashcard', deck_name=deck_name) }}">
+        <input type="submit" value="Next flashcard">
+    </form>
+
+
 </section>
 
 {% endblock %}
