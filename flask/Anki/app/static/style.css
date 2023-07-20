@@ -132,3 +132,45 @@ body {
     cursor: pointer;
     float: right;
 }
+
+.flashcard-layout {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 30px;
+    min-height: 85vh;
+}
+
+.flashcard-name:not(:last-child)  {
+    padding-bottom: 15px;
+    border-bottom: 1px solid #C0C0C0;
+}
+
+.flashcard-name:last-child {
+    padding-bottom: 30px;
+}
+
+.button-section {
+    margin-top: auto; /* Push the button section to the bottom */
+}
+
+.flashcard-button {
+    margin: 10px;
+    width: 400px;
+    height: 40px;
+    color: #000000 ;
+    background-color: #FFFAFA;
+    border: 1px solid #C0C0C0;
+    border-radius: 16px;
+    font-size: 16px;
+}
+
+.flashcard-string-layout {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 50vh;
+    }

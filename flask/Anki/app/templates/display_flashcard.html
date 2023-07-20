@@ -2,17 +2,25 @@
 {% block title %}Home{% endblock %}
 {% block content%}
 <section>
-    <h1>{{ deck_name }}</h1>
+    <div class="flashcard-layout">
+        <div class="flashcard-string-layout" id="flashcard">
+            <p class="flashcard-name" id="front_name">{{ flashcard.front_name }}</p>
+            <h1 class="flashcard-name" id="back_name" style="display:none">{{ flashcard.back_name }}</h1>
+            <p class="flashcard-name" id="sentence" style="display:none">{{ flashcard.sentence }}</p>
+        </div>
+        <div class="button-section">
+            <button class="flashcard-button" id="answerButton">Answer</button>
 
-    {{ flashcard.front_name }}
-    {{ flashcard.back_name }}
-    {{ flashcard.sentence }}
-
-    <form method="POST" action="{{ url_for('body.display_flashcard', deck_name=deck_name) }}">
-        <input type="submit" value="Next flashcard">
-    </form>
-
-
+            <form method="POST"
+                  action="{{ url_for('body.display_flashcard', deck_name=deck_name) }}">
+                <button class="flashcard-button" type="submit"> Next flashcard</button>
+            </form>
+        </div>
+    </div>
+    <script
+            type="text/javascript"
+            src="{{ url_for('static', filename='index.js') }}"
+    ></script>
 </section>
 
 {% endblock %}

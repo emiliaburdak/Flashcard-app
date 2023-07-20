@@ -8,3 +8,9 @@ window.onload = function() {
     }
   }
 };
+
+
+document.getElementById("answerButton").addEventListener("click", function() {
+    document.getElementById("back_name").style.display = "block";
+    document.getElementById("sentence").style.display = "block";
+});
