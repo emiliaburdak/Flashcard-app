@@ -1,6 +1,6 @@
 from . import db
 from flask_login import UserMixin
-from sqlalchemy.sql import func
+import datetime
 
 
 class User(db.Model, UserMixin):
@@ -18,6 +18,9 @@ class FlashCard(db.Model, UserMixin):
     front_name = db.Column(db.String(50))
     sentence = db.Column(db.String(500))
     deck_id = db.Column(db.Integer, db.ForeignKey('deck.id', ondelete='CASCADE'), nullable=False)
+    strength = db.Column(db.Integer, default=1)
+    last_day_reviewed_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    next_review_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
 
 class Deck(db.Model, UserMixin):
@@ -26,10 +29,5 @@ class Deck(db.Model, UserMixin):
     author_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     flashcards = db.relationship('FlashCard', backref='deck', passive_deletes=True)
     language = db.Column(db.String(50))
+    last_seen_flashcard_id = db.Column(db.Integer, db.ForeignKey('flash_card.id'), nullable=True)
 
-
-class UserProgress(db.Model, UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    deck_id = db.Column(db.Integer, db.ForeignKey('deck.id'), nullable=False)
-    last_flashcard_id = db.Column(db.Integer, db.ForeignKey('flash_card.id'), nullable=True)
