@@ -84,15 +84,16 @@ def update_flashcard(flashcard_id):
     progress = request.form.get('progress')
     if progress == 'hard':
         current_flashcard_object.strength = 1
-    elif progress == 'so so':
-        current_flashcard_object.strength = 2
+    elif progress == 'medium_hard':
+        current_flashcard_object.strength = 5
+    elif progress == 'ok':
+        current_flashcard_object.strength = 10
     elif progress == 'easy':
-        current_flashcard_object.strength = 3
+        current_flashcard_object.strength *= 60 * 24 * 2
 
-    current_flashcard_object.strength = min(2.5, max(1.3, current_flashcard_object.strength))
     current_flashcard_object.last_day_review_at = datetime.datetime.utcnow
     current_flashcard_object.next_review_at = datetime.datetime.utcnow() + datetime.timedelta(
-        days=current_flashcard_object.strength)
+        minutes=current_flashcard_object.strength)
 
 
 @body.route('/display_flashcard/<deck_name>', methods=["GET", "POST"])

@@ -11,10 +11,20 @@
         <div class="button-section">
             <button class="flashcard-button" id="answerButton">Answer</button>
 
-            <form method="POST"
-                  action="{{ url_for('body.display_flashcard', deck_name=deck_name) }}">
-                <button class="flashcard-button" type="submit"> Next flashcard</button>
+            <form method="POST" action="{{ url_for('body.review_flashcard', flashcard_id=flashcard.id) }}">
+                <label for="strength">How hard was this flashcard?</label><br>
+                <input type="radio" id="easy" name="strength" value="easy">
+                <label for="easy">Easy</label><br>
+                <input type="radio" id="ok" name="strength" value="ok">
+                <label for="ok">Ok</label><br>
+                <input type="radio" id="medium hard" name="strength" value="medium_hard">
+                <label for="medium hard">Medium Hard</label><br>
+                <input type="radio" id="hard" name="strength" value="hard">
+                <label for="hard">Hard</label><br>
+
+                <input class="flashcard-button" type="submit" value="Submit">
             </form>
+
         </div>
     </div>
     <script
