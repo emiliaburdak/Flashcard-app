@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
-from .models import FlashCard, User, Deck, UserProgress
+from .models import FlashCard, User, Deck
 from . import db
 import datetime
 
@@ -78,19 +78,23 @@ def add_flashcard():
     return render_template('new_flashcard.html', user=current_user, existing_decks=all_existing_decks_names)
 
 
-@body.route('/update_flashcard/flashcard_id', methods=['GET', 'POST'])
+@body.route('/update_flashcard/<flashcard_id>', methods=['GET', 'POST'])
 @login_required
 def update_flashcard(flashcard_id):
-    current_flashcard_object = FlashCard.query.filter_by(flashcard_id=flashcard_id).first()
+    current_flashcard_object = FlashCard.query.filter_by(id=flashcard_id).first()
 
-    progress = request.form.get('progress')
-    if progress == 'hard':
+    deck_id = current_flashcard_object.deck_id
+    deck_object = Deck.query.filter_by(id=deck_id).first()
+    deck_name = deck_object.deck_name
+
+    new_strength = request.form.get('strength')
+    if new_strength == 'hard':
         current_flashcard_object.strength = 1
-    elif progress == 'medium_hard':
+    elif new_strength == 'medium_hard':
         current_flashcard_object.strength = 5
-    elif progress == 'ok':
+    elif new_strength == 'ok':
         current_flashcard_object.strength = 10
-    elif progress == 'easy':
+    elif new_strength == 'easy':
         current_flashcard_object.strength *= 60 * 24 * 2
 
     current_flashcard_object.last_day_review_at = datetime.datetime.utcnow
@@ -98,6 +102,7 @@ def update_flashcard(flashcard_id):
         minutes=current_flashcard_object.strength)
 
     db.session.commit()
+    return redirect(url_for('body.display_flashcard', deck_name=deck_name))
 
 
 @body.route('/display_flashcard/<deck_name>', methods=["GET", "POST"])
@@ -113,7 +118,7 @@ def display_flashcard(deck_name):
     last_seen_flashcard_id = deck_object.last_seen_flashcard_id
     if last_seen_flashcard_id is None:
         # jesli nie były przeglądane fiszki i nie ma żadnej kartki w decku
-        if not deck_object.flaschcards[0].id:
+        if not deck_object.flashcards[0].id:
             flash('This deck is empty')
             return redirect(url_for('body.home'))
         next_flashcard = FlashCard.query.filter(FlashCard.deck_id == deck_id,
@@ -123,19 +128,18 @@ def display_flashcard(deck_name):
         next_flashcard = FlashCard.query.filter(FlashCard.deck_id == deck_id,
                                                 FlashCard.id > last_seen_flashcard_id,
                                                 FlashCard.next_review_at <= datetime.datetime.utcnow()).first()
-        if next_flashcard is None:
-            flash('This deck is empty')
-            return redirect(url_for('body.home'))
 
     if next_flashcard is None:
         # jeśli skończyły się w decku fiszki to zacznij od początku te do powtórki
         next_flashcard = FlashCard.query.filter(FlashCard.deck_id == deck_id,
                                                 FlashCard.next_review_at <= datetime.datetime.utcnow()).first()
+
         if next_flashcard is None:
             flash('This deck is empty')
             return redirect(url_for('body.home'))
 
-    deck_object.last_seen_flashcard_id = next_flashcard.id
+    next_flashcard_id = next_flashcard.id
+    deck_object.last_seen_flashcard_id = next_flashcard_id
     db.session.commit()
 
     return render_template('display_flashcard.html', user_id=user_id, user=current_user, flashcard=next_flashcard,

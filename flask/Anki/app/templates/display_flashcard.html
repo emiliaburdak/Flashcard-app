@@ -11,7 +11,7 @@
         <div class="button-section">
             <button class="flashcard-button" id="answerButton">Answer</button>
 
-            <form method="POST" action="{{ url_for('body.review_flashcard', flashcard_id=flashcard.id) }}">
+            <form method="POST" action="{{ url_for('body.update_flashcard', flashcard_id=flashcard.id, deck_name=deck_name) }}">
                 <label for="strength">How hard was this flashcard?</label><br>
                 <input type="radio" id="easy" name="strength" value="easy">
                 <label for="easy">Easy</label><br>
