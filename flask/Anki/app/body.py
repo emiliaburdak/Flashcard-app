@@ -68,7 +68,9 @@ def add_flashcard():
                 flash('Select deck from existing decks or create new deck', category='error')
                 return redirect(url_for('body.add_flashcard'))
 
-            new_flashcard = FlashCard(back_name=back_name, front_name=front_name, sentence=sentence, deck_id=deck_id)
+            new_flashcard = FlashCard(back_name=back_name, front_name=front_name, sentence=sentence, deck_id=deck_id,
+                                      strength=1, last_day_reviewed_at=datetime.datetime.utcnow(),
+                                      next_review_at=datetime.datetime.utcnow())
             db.session.add(new_flashcard)
             db.session.commit()
             flash('The flashcard has been created!', category='success')
@@ -95,6 +97,8 @@ def update_flashcard(flashcard_id):
     current_flashcard_object.next_review_at = datetime.datetime.utcnow() + datetime.timedelta(
         minutes=current_flashcard_object.strength)
 
+    db.session.commit()
+
 
 @body.route('/display_flashcard/<deck_name>', methods=["GET", "POST"])
 def display_flashcard(deck_name):
@@ -108,29 +112,33 @@ def display_flashcard(deck_name):
 
     last_seen_flashcard_id = deck_object.last_seen_flashcard_id
     if last_seen_flashcard_id is None:
+        # jesli nie były przeglądane fiszki i nie ma żadnej kartki w decku
         if not deck_object.flaschcards[0].id:
             flash('This deck is empty')
             return redirect(url_for('body.home'))
         next_flashcard = FlashCard.query.filter(FlashCard.deck_id == deck_id,
                                                 FlashCard.next_review_at <= datetime.datetime.utcnow()).first()
-        next_flashcard_id = next_flashcard.id
     else:
         # kolejna fiszka musi należeć do tej talii, tam gdzie skończyliśmy i tylko z tych co są do powtórki
         next_flashcard = FlashCard.query.filter(FlashCard.deck_id == deck_id,
                                                 FlashCard.id > last_seen_flashcard_id,
                                                 FlashCard.next_review_at <= datetime.datetime.utcnow()).first()
-        next_flashcard_id = next_flashcard.id
+        if next_flashcard is None:
+            flash('This deck is empty')
+            return redirect(url_for('body.home'))
 
-    if next_flashcard_id is None:
+    if next_flashcard is None:
         # jeśli skończyły się w decku fiszki to zacznij od początku te do powtórki
         next_flashcard = FlashCard.query.filter(FlashCard.deck_id == deck_id,
                                                 FlashCard.next_review_at <= datetime.datetime.utcnow()).first()
-        next_flashcard_id = next_flashcard.id
+        if next_flashcard is None:
+            flash('This deck is empty')
+            return redirect(url_for('body.home'))
 
-    deck_object.last_seen_flashcard_id = next_flashcard_id
+    deck_object.last_seen_flashcard_id = next_flashcard.id
     db.session.commit()
 
-    return render_template('display_flashcard.html', user_id=user_id, user=current_user, flashcard=next_flashcard_id,
+    return render_template('display_flashcard.html', user_id=user_id, user=current_user, flashcard=next_flashcard,
                            deck_name=deck_name)
 
 

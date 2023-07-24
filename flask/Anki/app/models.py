@@ -12,7 +12,7 @@ class User(db.Model, UserMixin):
     decks = db.relationship('Deck', backref='user', passive_deletes=True)
 
 
-class FlashCard(db.Model, UserMixin):
+class FlashCard(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     back_name = db.Column(db.String(50))
     front_name = db.Column(db.String(50))
@@ -23,7 +23,7 @@ class FlashCard(db.Model, UserMixin):
     next_review_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
 
-class Deck(db.Model, UserMixin):
+class Deck(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     deck_name = db.Column(db.String(50))
     author_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
