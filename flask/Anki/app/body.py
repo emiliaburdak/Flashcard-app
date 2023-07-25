@@ -18,11 +18,17 @@ def home():
     return render_template('home.html', user=current_user, decks_names=all_decks_names)
 
 
+def find_all_decks_names():
+    all_existing_decks_tuples = Deck.query.with_entities(Deck.deck_name).all()
+    all_existing_decks_names = [deck_name[0] for deck_name in all_existing_decks_tuples]
+    return all_existing_decks_names
+
+
 @body.route('/add-flashcard', methods=['GET', 'POST'])
 @login_required
 def add_flashcard():
-    all_existing_decks_tuples = Deck.query.with_entities(Deck.deck_name).all()
-    all_existing_decks_names = [deck_name[0] for deck_name in all_existing_decks_tuples]
+
+    all_existing_decks_names = find_all_decks_names()
 
     if request.method == 'POST':
         back_name = request.form.get('back-name')
