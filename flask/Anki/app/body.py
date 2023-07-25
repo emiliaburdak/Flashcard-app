@@ -11,14 +11,12 @@ body = Blueprint('body', __name__)
 @body.route('/home')
 @login_required
 def home():
-    all_decks_tuples = Deck.query.with_entities(Deck.deck_name).all()
-    all_decks_names = [deck_name[0] for deck_name in all_decks_tuples]
-
-    # all_decks_tuples = [("Talia 1",), ("Talia 2",), ("Talia3,)]
+    all_decks_names = find_all_decks_names()
     return render_template('home.html', user=current_user, decks_names=all_decks_names)
 
 
 def find_all_decks_names():
+    # all_existing_decks_tuples = [("Talia 1",), ("Talia 2",), ("Talia3,)]
     all_existing_decks_tuples = Deck.query.with_entities(Deck.deck_name).all()
     all_existing_decks_names = [deck_name[0] for deck_name in all_existing_decks_tuples]
     return all_existing_decks_names
@@ -108,8 +106,8 @@ def find_current_flashcard(flashcard_id):
     return current_flashcard_object
 
 
-def find_current_deck_name(current_flashcard_object):
-    deck_id = current_flashcard_object.deck_id
+def find_current_deck_name(flashcard_object):
+    deck_id = flashcard_object.deck_id
     deck_object = Deck.query.filter_by(id=deck_id).first()
     deck_name = deck_object.deck_name
     return deck_name
@@ -146,9 +144,14 @@ def update_flashcard(flashcard_id):
     return redirect(url_for('body.display_flashcard', deck_name=deck_name))
 
 
+def find_deck_object_by_deck_name(deck_name):
+    deck_object = Deck.query.filter_by(deck_name=deck_name).first()
+    return deck_object
+
+
 @body.route('/display_flashcard/<deck_name>', methods=["GET", "POST"])
 def display_flashcard(deck_name):
-    deck_object = Deck.query.filter_by(deck_name=deck_name).first()
+    deck_object = find_deck_object_by_deck_name(deck_name)
     if not deck_object:
         flash('No such deck')
         return redirect(url_for('body.home'))
@@ -162,29 +165,43 @@ def display_flashcard(deck_name):
         if not deck_object.flashcards[0].id:
             flash('This deck is empty')
             return redirect(url_for('body.home'))
-        next_flashcard = FlashCard.query.filter(FlashCard.deck_id == deck_id,
-                                                FlashCard.next_review_at <= datetime.datetime.utcnow()).first()
+        next_flashcard = unreviewed_flashcard_from_beginning(deck_id)
+
     else:
         # kolejna fiszka musi należeć do tej talii, tam gdzie skończyliśmy i tylko z tych co są do powtórki
-        next_flashcard = FlashCard.query.filter(FlashCard.deck_id == deck_id,
-                                                FlashCard.id > last_seen_flashcard_id,
-                                                FlashCard.next_review_at <= datetime.datetime.utcnow()).first()
+        next_flashcard = unreviewed_flashcard(deck_id, last_seen_flashcard_id)
 
+    # if you have reach end of deck, but you have flashcards to review from beginning of the deck.
     if next_flashcard is None:
-        # jeśli skończyły się w decku fiszki to zacznij od początku te do powtórki
-        next_flashcard = FlashCard.query.filter(FlashCard.deck_id == deck_id,
-                                                FlashCard.next_review_at <= datetime.datetime.utcnow()).first()
+        next_flashcard = unreviewed_flashcard_from_beginning(deck_id)
 
         if next_flashcard is None:
             flash('This deck is empty')
             return redirect(url_for('body.home'))
 
-    next_flashcard_id = next_flashcard.id
-    deck_object.last_seen_flashcard_id = next_flashcard_id
-    db.session.commit()
+    update_last_seen_flashcard(deck_object, next_flashcard)
 
     return render_template('display_flashcard.html', user_id=user_id, user=current_user, flashcard=next_flashcard,
                            deck_name=deck_name)
+
+
+def unreviewed_flashcard_from_beginning(deck_id):
+    next_flashcard = FlashCard.query.filter(FlashCard.deck_id == deck_id,
+                                            FlashCard.next_review_at <= datetime.datetime.utcnow()).first()
+    return next_flashcard
+
+
+def unreviewed_flashcard(deck_id, last_seen_flashcard_id,):
+    next_flashcard = FlashCard.query.filter(FlashCard.deck_id == deck_id,
+                                            FlashCard.id > last_seen_flashcard_id,
+                                            FlashCard.next_review_at <= datetime.datetime.utcnow()).first()
+    return next_flashcard
+
+
+def update_last_seen_flashcard(deck_object, next_flashcard):
+    next_flashcard_id = next_flashcard.id
+    deck_object.last_seen_flashcard_id = next_flashcard_id
+    db.session.commit()
 
 
 @body.route('/display')
