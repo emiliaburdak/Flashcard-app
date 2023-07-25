@@ -7,14 +7,6 @@ import datetime
 body = Blueprint('body', __name__)
 
 
-@body.route('/')
-@body.route('/home')
-@login_required
-def home():
-    all_decks_names = find_all_decks_names()
-    return render_template('home.html', user=current_user, decks_names=all_decks_names)
-
-
 def find_all_decks_names():
     # all_existing_decks_tuples = [("Talia 1",), ("Talia 2",), ("Talia3,)]
     all_existing_decks_tuples = Deck.query.with_entities(Deck.deck_name).all()
@@ -69,6 +61,59 @@ def create_new_flashcard(back_name, front_name, deck_id, sentence):
     return new_flashcard
 
 
+def find_current_flashcard(flashcard_id):
+    current_flashcard_object = FlashCard.query.filter_by(id=flashcard_id).first()
+    return current_flashcard_object
+
+
+def find_current_deck_name(flashcard_object):
+    deck_id = flashcard_object.deck_id
+    deck_object = Deck.query.filter_by(id=deck_id).first()
+    deck_name = deck_object.deck_name
+    return deck_name
+
+
+def update_flashcard_strength(current_flashcard_object, new_strength):
+    day_in_minutes = 60 * 24
+
+    if new_strength == 'hard':
+        current_flashcard_object.strength = 1
+    elif new_strength == 'medium_hard':
+        current_flashcard_object.strength = 5
+    elif new_strength == 'ok':
+        current_flashcard_object.strength = 10
+    elif new_strength == 'easy':
+        current_flashcard_object.strength *= day_in_minutes * 2
+    return current_flashcard_object
+
+
+def unreviewed_flashcard_from_beginning(deck_id):
+    next_flashcard = FlashCard.query.filter(FlashCard.deck_id == deck_id,
+                                            FlashCard.next_review_at <= datetime.datetime.utcnow()).first()
+    return next_flashcard
+
+
+def unreviewed_flashcard(deck_id, last_seen_flashcard_id,):
+    next_flashcard = FlashCard.query.filter(FlashCard.deck_id == deck_id,
+                                            FlashCard.id > last_seen_flashcard_id,
+                                            FlashCard.next_review_at <= datetime.datetime.utcnow()).first()
+    return next_flashcard
+
+
+def update_last_seen_flashcard(deck_object, next_flashcard):
+    next_flashcard_id = next_flashcard.id
+    deck_object.last_seen_flashcard_id = next_flashcard_id
+    db.session.commit()
+
+
+@body.route('/')
+@body.route('/home')
+@login_required
+def home():
+    all_decks_names = find_all_decks_names()
+    return render_template('home.html', user=current_user, decks_names=all_decks_names)
+
+
 @body.route('/add-flashcard', methods=['GET', 'POST'])
 @login_required
 def add_flashcard():
@@ -99,32 +144,6 @@ def add_flashcard():
         create_new_flashcard(back_name, front_name, deck_id, sentence)
 
     return render_template('new_flashcard.html', user=current_user, existing_decks=all_existing_decks_names)
-
-
-def find_current_flashcard(flashcard_id):
-    current_flashcard_object = FlashCard.query.filter_by(id=flashcard_id).first()
-    return current_flashcard_object
-
-
-def find_current_deck_name(flashcard_object):
-    deck_id = flashcard_object.deck_id
-    deck_object = Deck.query.filter_by(id=deck_id).first()
-    deck_name = deck_object.deck_name
-    return deck_name
-
-
-def update_flashcard_strength(current_flashcard_object, new_strength):
-    day_in_minutes = 60 * 24
-
-    if new_strength == 'hard':
-        current_flashcard_object.strength = 1
-    elif new_strength == 'medium_hard':
-        current_flashcard_object.strength = 5
-    elif new_strength == 'ok':
-        current_flashcard_object.strength = 10
-    elif new_strength == 'easy':
-        current_flashcard_object.strength *= day_in_minutes * 2
-    return current_flashcard_object
 
 
 @body.route('/update_flashcard/<flashcard_id>', methods=['GET', 'POST'])
@@ -158,23 +177,17 @@ def display_flashcard(deck_name):
 
     deck_id = deck_object.id
     user_id = deck_object.author_id
-
     last_seen_flashcard_id = deck_object.last_seen_flashcard_id
-    if last_seen_flashcard_id is None:
-        # jesli nie były przeglądane fiszki i nie ma żadnej kartki w decku
-        if not deck_object.flashcards[0].id:
-            flash('This deck is empty')
-            return redirect(url_for('body.home'))
-        next_flashcard = unreviewed_flashcard_from_beginning(deck_id)
 
+    if last_seen_flashcard_id is None:
+        next_flashcard = unreviewed_flashcard_from_beginning(deck_id)
     else:
-        # kolejna fiszka musi należeć do tej talii, tam gdzie skończyliśmy i tylko z tych co są do powtórki
         next_flashcard = unreviewed_flashcard(deck_id, last_seen_flashcard_id)
 
-    # if you have reach end of deck, but you have flashcards to review from beginning of the deck.
+    # if you have reach end of the deck, but you have flashcards to review from beginning of the deck.
     if next_flashcard is None:
         next_flashcard = unreviewed_flashcard_from_beginning(deck_id)
-
+        # there is no flashcard to review in this deck
         if next_flashcard is None:
             flash('This deck is empty')
             return redirect(url_for('body.home'))
@@ -183,25 +196,6 @@ def display_flashcard(deck_name):
 
     return render_template('display_flashcard.html', user_id=user_id, user=current_user, flashcard=next_flashcard,
                            deck_name=deck_name)
-
-
-def unreviewed_flashcard_from_beginning(deck_id):
-    next_flashcard = FlashCard.query.filter(FlashCard.deck_id == deck_id,
-                                            FlashCard.next_review_at <= datetime.datetime.utcnow()).first()
-    return next_flashcard
-
-
-def unreviewed_flashcard(deck_id, last_seen_flashcard_id,):
-    next_flashcard = FlashCard.query.filter(FlashCard.deck_id == deck_id,
-                                            FlashCard.id > last_seen_flashcard_id,
-                                            FlashCard.next_review_at <= datetime.datetime.utcnow()).first()
-    return next_flashcard
-
-
-def update_last_seen_flashcard(deck_object, next_flashcard):
-    next_flashcard_id = next_flashcard.id
-    deck_object.last_seen_flashcard_id = next_flashcard_id
-    db.session.commit()
 
 
 @body.route('/display')
