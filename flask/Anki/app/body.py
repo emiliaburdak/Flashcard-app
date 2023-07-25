@@ -85,7 +85,8 @@ def add_flashcard():
         create_new_deck = request.form.get('new-deck')
         user = current_user
 
-        valid_input, message, flash_category = check_if_input_is_valid(back_name, front_name, language, create_new_deck, select_existing_deck)
+        valid_input, message, flash_category = check_if_input_is_valid(back_name, front_name, language, create_new_deck,
+                                                                       select_existing_deck)
         if not valid_input:
             flash(message, category=flash_category)
             return redirect(url_for('body.add_flashcard'))
@@ -102,16 +103,21 @@ def add_flashcard():
     return render_template('new_flashcard.html', user=current_user, existing_decks=all_existing_decks_names)
 
 
-@body.route('/update_flashcard/<flashcard_id>', methods=['GET', 'POST'])
-@login_required
-def update_flashcard(flashcard_id):
+def find_current_flashcard(flashcard_id):
     current_flashcard_object = FlashCard.query.filter_by(id=flashcard_id).first()
+    return current_flashcard_object
 
+
+def find_current_deck_name(current_flashcard_object):
     deck_id = current_flashcard_object.deck_id
     deck_object = Deck.query.filter_by(id=deck_id).first()
     deck_name = deck_object.deck_name
+    return deck_name
 
-    new_strength = request.form.get('strength')
+
+def update_flashcard_strength(current_flashcard_object, new_strength):
+    day_in_minutes = 60 * 24
+
     if new_strength == 'hard':
         current_flashcard_object.strength = 1
     elif new_strength == 'medium_hard':
@@ -119,8 +125,19 @@ def update_flashcard(flashcard_id):
     elif new_strength == 'ok':
         current_flashcard_object.strength = 10
     elif new_strength == 'easy':
-        current_flashcard_object.strength *= 60 * 24 * 2
+        current_flashcard_object.strength *= day_in_minutes * 2
+    return current_flashcard_object
 
+
+@body.route('/update_flashcard/<flashcard_id>', methods=['GET', 'POST'])
+@login_required
+def update_flashcard(flashcard_id):
+    current_flashcard_object = find_current_flashcard(flashcard_id)
+    deck_name = find_current_deck_name(current_flashcard_object)
+
+    new_strength = request.form.get('strength')
+    # update parameters
+    current_flashcard_object = update_flashcard_strength(current_flashcard_object, new_strength)
     current_flashcard_object.last_day_review_at = datetime.datetime.utcnow
     current_flashcard_object.next_review_at = datetime.datetime.utcnow() + datetime.timedelta(
         minutes=current_flashcard_object.strength)
