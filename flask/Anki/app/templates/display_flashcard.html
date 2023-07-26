@@ -5,23 +5,28 @@
     <div class="flashcard-layout">
         <div class="flashcard-string-layout" id="flashcard">
             <p class="flashcard-name" id="front_name">{{ flashcard.front_name }}</p>
+            <p class="flashcard-name" id="hint" data-back-name="{{ flashcard.back_name }}" style="display:none"></p>
             <h1 class="flashcard-name" id="back_name" style="display:none">{{ flashcard.back_name }}</h1>
             <p class="flashcard-name" id="sentence" style="display:none">{{ flashcard.sentence }}</p>
         </div>
         <div class="button-section">
-            <button class="flashcard-button" id="answerButton">Answer</button>
+            <button class="flashcard-button" id="hintButton">Show hint</button>
+            <br>
+            <button class="flashcard-button" id="answerButton">Show answer</button>
 
-            <form method="POST" action="{{ url_for('body.update_flashcard', flashcard_id=flashcard.id, deck_name=deck_name) }}">
-                <label for="strength">How hard was this flashcard?</label><br>
-                <input type="radio" id="easy" name="strength" value="easy">
-                <label for="easy">Easy</label><br>
-                <input type="radio" id="ok" name="strength" value="ok">
-                <label for="ok">Ok</label><br>
-                <input type="radio" id="medium hard" name="strength" value="medium_hard">
-                <label for="medium hard">Medium Hard</label><br>
-                <input type="radio" id="hard" name="strength" value="hard">
-                <label for="hard">Hard</label><br>
-
+            <form method="POST"
+                  action="{{ url_for('body.update_flashcard', flashcard_id=flashcard.id, deck_name=deck_name) }}">
+                <label class="strength-label" for="strength">How hard was this flashcard?</label><br>
+                <div class="radio-button">
+                    <input type="radio" id="hard" name="strength" value="hard">
+                    <label class="radio-label" for="hard">Hard</label>
+                    <input type="radio" id="medium hard" name="strength" value="medium_hard">
+                    <label class="radio-label" for="medium hard">Medium Hard</label>
+                    <input type="radio" id="ok" name="strength" value="ok">
+                    <label class="radio-label" for="ok">Ok</label>
+                    <input type="radio" id="easy" name="strength" value="easy">
+                    <label class="radio-label" for="easy">Easy</label><br>
+                </div>
                 <input class="flashcard-button" type="submit" value="Submit">
             </form>
 
