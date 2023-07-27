@@ -198,11 +198,20 @@ def display_flashcard(deck_name):
                            deck_name=deck_name)
 
 
-@body.route('/edit_flashcard/<flashcard_id>', methods=['GET', 'POST'])
+@body.route('/render_edit_flashcard_template/<flashcard_id>', methods=['GET'])
 @login_required
-def edit_flashcard(flashcard_id):
+def render_edit_flashcard_template(flashcard_id):
     existing_decks = find_all_decks_names()
     flashcard = find_current_flashcard(flashcard_id)
+
+    return render_template('edit_flashcard.html', user=current_user, flashcard=flashcard, existing_decks=existing_decks)
+
+
+@body.route('/edit_flashcard/<flashcard_id>', methods=['POST'])
+@login_required
+def edit_flashcard(flashcard_id):
+    flashcard = find_current_flashcard(flashcard_id)
+    deck_name = find_current_deck_name(flashcard)
 
     if request.method == 'POST':
         new_front_name = request.form.get('new-front-name')
@@ -219,12 +228,10 @@ def edit_flashcard(flashcard_id):
         if new_selected_deck:
             new_deck_id = find_deck_object_by_deck_name(new_selected_deck)
             flashcard.deck_id = new_deck_id
+            deck_name = new_selected_deck
 
         db.session.commit()
-        return render_template('display_flashcard.html', user=current_user, flashcard=flashcard,
-                               existing_decks=existing_decks)
-
-    return render_template('edit_flashcard.html', user=current_user, flashcard=flashcard, existing_decks=existing_decks)
+    return render_template('display_flashcard.html', user=current_user, flashcard=flashcard, deck_name=deck_name)
 
 
 @body.route('/display')
