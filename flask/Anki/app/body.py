@@ -169,6 +169,7 @@ def update_flashcard(flashcard_id):
 
 
 @body.route('/display_flashcard/<deck_name>', methods=["GET", "POST"])
+@login_required
 def display_flashcard(deck_name):
     deck_object = find_deck_object_by_deck_name(deck_name)
     if not deck_object:
@@ -232,6 +233,18 @@ def edit_flashcard(flashcard_id):
 
         db.session.commit()
     return render_template('display_flashcard.html', user=current_user, flashcard=flashcard, deck_name=deck_name)
+
+
+@body.route('/delete_flashcard/<flashcard_id>', methods=['GET'])
+@login_required
+def delete_flashcard(flashcard_id):
+    flashcard = find_current_flashcard(flashcard_id)
+    deck_name = find_current_deck_name(flashcard)
+
+    db.session.delete(flashcard)
+    db.session.commit()
+
+    return redirect(url_for('body.display_flashcard', deck_name=deck_name))
 
 
 @body.route('/display')
