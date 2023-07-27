@@ -25,3 +25,10 @@ document.getElementById("hintButton").addEventListener("click", function() {
     hintElement.style.display = "block";
     hintElement.textContent = backName.slice(0, ++hintIndex);
 });
+
+
+
+
+
+
+

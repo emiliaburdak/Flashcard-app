@@ -1,0 +1,60 @@
+{% extends "baseline.html" %}
+{% block title %}New FlashCard{% endblock %}
+{% block content%}
+
+<section class="authentication-box">
+    <form action="/edit_flashcard/{{flashcard.id}}" method="POST">
+        <h1 class="authentication-title">Change flashcard</h1>
+        <div class="one-item-box">
+            <label class="input-label" for="new-front-name">Edit front of the flashcard</label>
+            <input
+                    class="input"
+                    type="text"
+                    id="new-front-name"
+                    name="new-front-name"
+                    value="{{flashcard.front_name}}"
+            />
+        </div>
+
+        <div class="one-item-box">
+            <label class="input-label" for="new-back-name">Edit back of the flashcard</label>
+            <input
+                    class="input"
+                    type="text"
+                    id="new-back-name"
+                    name="new-back-name"
+                    value="{{flashcard.back_name}}"
+            />
+        </div>
+
+        <div class="one-item-box">
+            <label class="input-label" for="new-example-sentence">Edit example sentence</label>
+            <input
+                    class="input"
+                    type="text"
+                    id="new-example-sentence"
+                    name="new-example-sentence"
+                    value="{{flashcard.sentence}}"
+            />
+        </div>
+
+        <div class="one-item-box">
+            <label class="input-label" for="new-selected-deck">Edit existing deck</label>
+            <select class="input" id="new-selected-deck" name="new-selected-deck">
+                <option selected disabled>-- select an existing deck --</option>
+                {% for deck in existing_decks %}
+                <option value="{{ deck }}">{{ deck }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <br>
+        <div class="one-item-box">
+            <button type=submit class="authentication-submit-button">Submit</button>
+        </div>
+
+    </form>
+</section>
+
+
+{% endblock %}
