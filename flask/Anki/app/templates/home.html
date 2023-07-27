@@ -4,11 +4,12 @@
 
 <section>
     <ul class="display-deck-view">
-        {% for deck_name in decks_names %}
+        {% for deck_name, daily_rating in decks.items() %}
         {% if deck_name != None %}
         <ul><a href="{{ url_for('body.display_flashcard', deck_name=deck_name) }}">
             <button class="deck-buttons" type="button">
                 {{ deck_name.lower() }}
+                {{ daily_rating }} flashcards left to review
             </button>
         </a></ul>
         {% endif %}
@@ -17,3 +18,4 @@
 </section>
 
 {% endblock %}
+

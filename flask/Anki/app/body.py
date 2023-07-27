@@ -14,20 +14,20 @@ def find_all_decks_names():
     return all_existing_decks_names
 
 
-def find_deck_id_from_existing_deck(select_existing_deck, user):
-    find_selected_deck_object = list(filter(lambda x: x.deck_name == select_existing_deck, user.decks))
+def find_deck_id_from_existing_deck(deck_name, user):
+    find_selected_deck_object = list(filter(lambda x: x.deck_name == deck_name, user.decks))
     deck_id = find_selected_deck_object[0].id
     return deck_id
 
 
-def find_deck_id_from_create_new_deck(create_new_deck, language, user):
-    check_if_matching_names = list(filter(lambda x: x.deck_name == create_new_deck, user.decks))
+def find_deck_id_from_create_new_deck(created_new_deck_name, language, user):
+    check_if_matching_names = list(filter(lambda x: x.deck_name == created_new_deck_name, user.decks))
     if check_if_matching_names:
         deck_id = check_if_matching_names[0].id
         flash('Your new deck name already exist - the flashcard has been assigned to the existing deck')
         return deck_id
     else:
-        new_deck = Deck(deck_name=create_new_deck, author_id=user.id, language=language,
+        new_deck = Deck(deck_name=created_new_deck_name, author_id=user.id, language=language,
                         last_seen_flashcard_id=None)
         db.session.add(new_deck)
         db.session.flush()
@@ -111,12 +111,26 @@ def find_deck_object_by_deck_name(deck_name):
     return deck_object
 
 
+def all_flashcards_to_review_now(deck_id):
+    unreviewed_flashcards = FlashCard.query.filter(FlashCard.deck_id == deck_id,
+                                            FlashCard.next_review_at <= datetime.datetime.utcnow()).all()
+    return unreviewed_flashcards
+
+
+def daily_rating(deck_name):
+    deck_id = find_deck_id_from_existing_deck(deck_name, current_user)
+    flashcards_to_review = all_flashcards_to_review_now(deck_id)
+    amount_flashcards_to_review = len(flashcards_to_review)
+    return amount_flashcards_to_review
+
+
 @body.route('/')
 @body.route('/home')
 @login_required
 def home():
     all_decks_names = find_all_decks_names()
-    return render_template('home.html', user=current_user, decks_names=all_decks_names)
+    all_decks_daily_rating = {deck_name: daily_rating(deck_name) for deck_name in all_decks_names}
+    return render_template('home.html', user=current_user, decks=all_decks_daily_rating)
 
 
 @body.route('/add-flashcard', methods=['GET', 'POST'])
