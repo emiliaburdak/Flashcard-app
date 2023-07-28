@@ -91,9 +91,18 @@ body {
     margin: 10px;
     color: #000000;
     padding: 40px 30px;
-    font-size: 20px;
     cursor: pointer;
     width: 90vw;
+}
+
+.deck-name {
+    font-size: 20px;
+    margin-bottom: 12px;
+}
+
+.rating {
+    font-size: 15px;
+    color: #A9A9A9;
 }
 
 .note {
@@ -176,7 +185,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: 50vh;
+    min-height: 42vh;
 }
 
 .radio-label {
@@ -198,4 +207,15 @@ body {
     padding: 5px 30px;
     font-size: 14px;
     cursor: pointer;
+}
+
+a {
+    text-decoration : none;
+}
+
+.flashcard-upper-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
 }

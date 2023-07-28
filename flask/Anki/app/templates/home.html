@@ -8,8 +8,8 @@
         {% if deck_name != None %}
         <ul><a href="{{ url_for('body.display_flashcard', deck_name=deck_name) }}">
             <button class="deck-buttons" type="button">
-                {{ deck_name.lower() }}
-                {{ daily_rating }} flashcards left to review
+                <div class="deck-name">{{ deck_name.lower() }}</div>
+                <div class="rating">{{ daily_rating }} flashcards left to review</div>
             </button>
         </a></ul>
         {% endif %}
