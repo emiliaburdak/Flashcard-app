@@ -133,7 +133,7 @@ def home():
     return render_template('home.html', user=current_user, decks=all_decks_daily_rating)
 
 
-@body.route('/add-flashcard', methods=['GET', 'POST'])
+@body.route('/add_flashcard', methods=['GET', 'POST'])
 @login_required
 def add_flashcard():
     all_existing_decks_names = find_all_decks_names()
