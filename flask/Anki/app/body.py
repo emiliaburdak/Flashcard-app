@@ -269,7 +269,7 @@ def delete_flashcard(flashcard_id):
 @login_required
 def speak(flashcard_id):
     flashcard_object = find_current_flashcard(flashcard_id)
-    to_speak = flashcard_object.back_name + flashcard_object.sentence
+    to_speak = flashcard_object.back_name + ", " + flashcard_object.sentence
     tts = gTTS(text=to_speak, lang='es')
     with tempfile.NamedTemporaryFile(delete=True) as fp:
         tts.save(fp.name)

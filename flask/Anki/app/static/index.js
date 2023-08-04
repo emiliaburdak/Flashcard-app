@@ -27,10 +27,27 @@ document.getElementById("hintButton").addEventListener("click", function() {
 });
 
 
+var audio = new Audio();
+var lastClick = 0;
+
 document.querySelectorAll('.speak').forEach(function(button) {
     button.addEventListener('click', function() {
+        var now = Date.now();
+
+        // Ignoruj kliknięcia, które są szybsze niż 2 sekund po poprzednim
+        if (now - lastClick < 2000) {
+            return;
+        }
+
+        lastClick = now;
+
+        if (!audio.paused) {
+            audio.pause();
+            audio = new Audio();
+        }
+
         var id = button.getAttribute('data-id');
-        var audio = new Audio('/speak/' + id);
+        audio = new Audio('/speak/' + id);
         audio.play();
     });
 });
