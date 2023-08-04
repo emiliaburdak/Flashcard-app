@@ -28,5 +28,4 @@ class Deck(db.Model):
     deck_name = db.Column(db.String(50))
     author_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     flashcards = db.relationship('FlashCard', backref='deck', passive_deletes=True)
-    language = db.Column(db.String(50))
     last_seen_flashcard_id = db.Column(db.Integer, nullable=True)

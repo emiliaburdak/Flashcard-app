@@ -24,14 +24,14 @@ def find_deck_id_from_existing_deck(deck_name, user):
     return deck_id
 
 
-def find_deck_id_from_create_new_deck(created_new_deck_name, language, user):
+def find_deck_id_from_create_new_deck(created_new_deck_name, user):
     check_if_matching_names = list(filter(lambda x: x.deck_name == created_new_deck_name, user.decks))
     if check_if_matching_names:
         deck_id = check_if_matching_names[0].id
         flash('Your new deck name already exist - the flashcard has been assigned to the existing deck')
         return deck_id
     else:
-        new_deck = Deck(deck_name=created_new_deck_name, author_id=user.id, language=language,
+        new_deck = Deck(deck_name=created_new_deck_name, author_id=user.id,
                         last_seen_flashcard_id=None)
         db.session.add(new_deck)
         db.session.flush()
@@ -39,8 +39,8 @@ def find_deck_id_from_create_new_deck(created_new_deck_name, language, user):
         return deck_id
 
 
-def check_if_input_is_valid(back_name, front_name, language, create_new_deck, select_existing_deck):
-    if not back_name or not front_name or not language:
+def check_if_input_is_valid(back_name, front_name, create_new_deck, select_existing_deck):
+    if not back_name or not front_name:
         return False, 'Please completed all required fields', 'error'
 
     if len(back_name) < 1 or len(front_name) < 1:
@@ -145,13 +145,12 @@ def add_flashcard():
     if request.method == 'POST':
         back_name = request.form.get('back-name')
         front_name = request.form.get('front-name')
-        language = request.form.get('language')
         sentence = request.form.get('example-sentence')
         select_existing_deck = request.form.get('existing-deck')
         create_new_deck = request.form.get('new-deck')
         user = current_user
 
-        valid_input, message, flash_category = check_if_input_is_valid(back_name, front_name, language, create_new_deck,
+        valid_input, message, flash_category = check_if_input_is_valid(back_name, front_name, create_new_deck,
                                                                        select_existing_deck)
         if not valid_input:
             flash(message, category=flash_category)
@@ -162,7 +161,7 @@ def add_flashcard():
             if select_existing_deck and not create_new_deck:
                 deck_id = find_deck_id_from_existing_deck(select_existing_deck, user)
             else:
-                deck_id = find_deck_id_from_create_new_deck(create_new_deck, language, user)
+                deck_id = find_deck_id_from_create_new_deck(create_new_deck, user)
 
         create_new_flashcard(back_name, front_name, deck_id, sentence)
 
@@ -276,9 +275,3 @@ def speak(flashcard_id):
         fp.seek(0)
         audio = fp.read()
     return Response(audio, mimetype="audio/mp3")
-
-
-@body.route('/display')
-def display():
-    all_flashcards = FlashCard.query.all()
-    return render_template('check.html', all_flashcards=all_flashcards, user=current_user)
