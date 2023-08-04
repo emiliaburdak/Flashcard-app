@@ -1,8 +1,12 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, Flask, Response
 from flask_login import login_required, current_user
 from .models import FlashCard, User, Deck
 from . import db
 import datetime
+from gtts import gTTS
+import os
+import tempfile
+
 
 body = Blueprint('body', __name__)
 
@@ -259,6 +263,19 @@ def delete_flashcard(flashcard_id):
     db.session.commit()
 
     return redirect(url_for('body.display_flashcard', deck_name=deck_name))
+
+
+@body.route('/speak/<flashcard_id>', methods=['GET'])
+@login_required
+def speak(flashcard_id):
+    flashcard_object = find_current_flashcard(flashcard_id)
+    to_speak = flashcard_object.back_name + flashcard_object.sentence
+    tts = gTTS(text=to_speak, lang='es')
+    with tempfile.NamedTemporaryFile(delete=True) as fp:
+        tts.save(fp.name)
+        fp.seek(0)
+        audio = fp.read()
+    return Response(audio, mimetype="audio/mp3")
 
 
 @body.route('/display')

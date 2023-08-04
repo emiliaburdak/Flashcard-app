@@ -27,7 +27,13 @@ document.getElementById("hintButton").addEventListener("click", function() {
 });
 
 
-
+document.querySelectorAll('.speak').forEach(function(button) {
+    button.addEventListener('click', function() {
+        var id = button.getAttribute('data-id');
+        var audio = new Audio('/speak/' + id);
+        audio.play();
+    });
+});
 
 
 
