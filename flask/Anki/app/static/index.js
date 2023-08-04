@@ -43,7 +43,6 @@ document.querySelectorAll('.speak').forEach(function(button) {
 
         if (!audio.paused) {
             audio.pause();
-            audio = new Audio();
         }
 
         var id = button.getAttribute('data-id');
