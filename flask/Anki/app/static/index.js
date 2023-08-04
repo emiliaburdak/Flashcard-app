@@ -17,6 +17,7 @@ var backName = hintElement.getAttribute('data-back-name');
 document.getElementById("answerButton").addEventListener("click", function() {
     document.getElementById("back_name").style.display = "block";
     document.getElementById("sentence").style.display = "block";
+    document.getElementById("speak").style.display = "block";
     document.getElementById("hint").style.display = "none";  // hide the hint
 
 });
