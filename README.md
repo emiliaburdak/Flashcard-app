@@ -1,6 +1,5 @@
 # FlashcardApp
-Conversational application, which simulates real-time spoken dialogue
-
+Dynamic flashcard learning app designed for efficient, interactive study.
 ## Overview
 This application is a dynamic flashcard learning tool, developed with a focus on efficient and interactive learning. It includes features such as user authentication, comprehensive flashcard management with Create, Read, Update, and Delete (CRUD) functionalities, and complex elements like a forgetting curve algorithm, interactive hints, and Text-to-Speech (TTS) capabilities.
 ## Features
