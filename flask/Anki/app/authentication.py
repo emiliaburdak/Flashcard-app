@@ -34,7 +34,7 @@ def signup():
             flash("Email is invalid.", category='error')
         else:
             new_user = User(email=email, username=username, password=generate_password_hash(
-                password, method='sha256'))
+                password, method='pbkdf2:sha256'))
             db.session.add(new_user)
             db.session.commit()
             login_user(new_user, remember=True)
