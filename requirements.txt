@@ -2,3 +2,4 @@ Flask
 Werkzeug
 Flask-Login
 gTTS
+flask_sqlalchemy
