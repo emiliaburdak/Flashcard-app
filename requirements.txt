@@ -1,5 +1,5 @@
-Flask
+Flask==2.3.3
 Werkzeug==2.3.8
-Flask-Login
-gTTS
-flask_sqlalchemy
+Flask-Login==0.6.2
+gTTS==2.4.0
+flask_sqlalchemy==3.0.5
