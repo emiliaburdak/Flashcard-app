@@ -1,5 +1,5 @@
 Flask
-Werkzeug
+Werkzeug==2.3.8
 Flask-Login
 gTTS
 flask_sqlalchemy
