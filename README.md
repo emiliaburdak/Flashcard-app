@@ -14,4 +14,5 @@ Before you begin, ensure you have met the following requirements:
 - You have installed the latest version of Python 3.
 - Additional Libraries: The application might require other Python libraries, such as libraries for Text-to-Speech (TTS). These can be found and installed from the requirements.txt file in the repository.
 
-![Exemplary usage](https://drive.google.com/file/d/1Nu0zE54oyeNMaFT5VcGskmIibrRFe0cH)
+![GIF Description](https://drive.google.com/uc?export=view&id=1Nu0zE54oyeNMaFT5VcGskmIibrRFe0cH)
+
